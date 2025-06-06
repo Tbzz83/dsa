@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// TODO
+// Figure out how to print the tree
 
 typedef struct Node 
 {
@@ -68,7 +70,7 @@ void freetree(Node *node) {
 
 int main()
 {
-  int vals[] = {5,3,1,4,8,7,9};
+  int vals[] = {14,9,1,5,10,18,17,22,21,24};
   Node * head = buildtree(vals, sizeof(vals)/sizeof(vals[0]));
   checktree(head);
   freetree(head);

@@ -2,22 +2,24 @@
 #include <stdlib.h>
 
 void sort_arr(int arr[], int arr_len) {
-  // Still broke
-  // Need to do multiple passes
-  int l, r;
-  r = 1;
-  l = 0;
+  int i, j;
+  i = 1;
 
-  if (arr_len > 0) {
-    for ( r; r < arr_len; r ++) {
-      if (arr[r] < arr[l]) {
-        int temp = arr[r];
-        arr[r] = arr[l];
-        arr[l] = temp;
+  if (arr_len == 0) {
+    return;
+  }
+
+  for (i; i < arr_len; i++) {
+    j = 0; // reset j
+    for (j; j < arr_len - 1; j++) {
+      if (arr[j] > arr[j+1]) {
+        int tmp = arr[j+1];
+        arr[j+1] = arr[j];
+        arr[j] = tmp;
       }
-      l++;
     }
   }
+
 }
 
 void print_list(int arr[], int arr_len) {
@@ -29,6 +31,7 @@ void print_list(int arr[], int arr_len) {
 
 int search_arr(int arr[], int target, int arr_len) {
   // Array must be sorted
+  sort_arr(arr, arr_len);
 
   int l, r;
   l = 0;
@@ -49,7 +52,7 @@ int search_arr(int arr[], int target, int arr_len) {
 
 int main()
 {
-  int arr[] = {1,3,2,4,5,6};
+  int arr[] = {2,8,5,3,9,4,1};
   int arr_len = sizeof(arr)/sizeof(arr[0]);
   int target = 5;
   int idx = search_arr(arr, target, arr_len);
@@ -57,12 +60,13 @@ int main()
   if (idx != -1) {
     printf("index of target '%d' is '%d'\n", target, idx);
   }
+  print_list(arr, arr_len);
 
-  printf("before sorting\n");
-  print_list(arr, arr_len);
-  sort_arr(arr, arr_len);
-  printf("after sorting\n");
-  print_list(arr, arr_len);
+//  printf("before sorting\n");
+//  print_list(arr, arr_len);
+//  sort_arr(arr, arr_len);
+//  printf("after sorting\n");
+//  print_list(arr, arr_len);
 
   return 0;
 }
