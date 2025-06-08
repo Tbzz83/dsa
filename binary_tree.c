@@ -11,7 +11,7 @@ typedef struct Node
   struct Node *right;
 } Node;
 
-Node * createnode(int val)
+Node * create_node(int val)
 {
   Node * pNode = (Node*) malloc(sizeof(Node)); // Allocate memory on the heap
   pNode->data = val;
@@ -20,18 +20,18 @@ Node * createnode(int val)
   return pNode;
 }
 
-void putnode(Node * node, Node * new_node) {
+void add_node(Node * node, Node * new_node) {
   if (new_node->data < node->data) {
     if (node->left == NULL) {
       node->left = new_node;
-    } else { // Call putnode on left
-      putnode(node->left, new_node);
+    } else { // Call add_node on left
+      add_node(node->left, new_node);
     }
   } else if ( new_node->data > node->data) {
     if (node->right == NULL) {
       node->right = new_node;
-    } else { // Call putnode on right
-      putnode(node->right, new_node);
+    } else { // Call add_node on right
+      add_node(node->right, new_node);
     }
   } else { // Invalid node, violates binary tree
     printf("Invalid value for new node: %d as current node value is: %d\n", new_node->data, node->data);
@@ -39,50 +39,58 @@ void putnode(Node * node, Node * new_node) {
   }
 }
 
-Node * buildtree(int vals[], int vals_len) 
+Node * build_tree(int vals[], int vals_len) 
 {
-  Node * root = createnode(vals[0]);
+  Node * root = create_node(vals[0]);
   for (int i = 1; i < vals_len; i++)
   {
-    Node * new_node = createnode(vals[i]);
+    Node * new_node = create_node(vals[i]);
     printf("creating new node with value: %d\n", new_node->data);
-    putnode(root, new_node);
+    add_node(root, new_node);
   }
   return root;
 }
 
-void checktree(Node * node) {
+void print_tree(Node * node) {
   if (node == NULL) {
     return;
   }
   printf("%d\n", node->data);
-  checktree(node->left);
-  checktree(node->right);
+  print_tree(node->left);
+  print_tree(node->right);
   return;
 }
 
-void freetree(Node *node) {
+int get_tree_height(Node *node) {
+  if (node == NULL) {
+    return 0;
+  }
+
+  int left_height = get_tree_height(node->left);
+  int right_height = get_tree_height(node->right);
+
+  if (right_height >= left_height) {
+    return 1 + right_height;
+  } else {
+    return 1 + left_height;
+  }
+}
+
+void free_tree(Node *node) {
   if (node == NULL) return;
-  freetree(node->left);
-  freetree(node->right);
+  free_tree(node->left);
+  free_tree(node->right);
   free(node);
 }
 
 int main()
 {
   int vals[] = {14,9,1,5,10,18,17,22,21,24};
-  Node * head = buildtree(vals, sizeof(vals)/sizeof(vals[0]));
-  checktree(head);
-  freetree(head);
-//  Node * pNode1 = createnode(5);
-//  printf("node value: %d\n", pNode1->data);
-//  free(pNode1);
-//
-//  Node * pNode2 = createnode(6);
-//  pNode1->right = pNode1;
-//  printf("node1.right.val: %d\n", pNode1->right->data);
-//
-//  free(pNode2);
+  Node * head = build_tree(vals, sizeof(vals)/sizeof(vals[0]));
+  print_tree(head);
+  int height = get_tree_height(head);
+  printf("Tree height: %d\n", height);
+  free_tree(head);
 
   return 0;
 }
