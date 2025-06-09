@@ -215,7 +215,6 @@ int main()
   print_int_arr(postorder_arr, node_count);
   free(postorder_arr);
   
-
   int height = get_tree_height(head);
   print_tree(head, height);
   printf("\n");
