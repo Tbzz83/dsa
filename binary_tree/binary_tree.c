@@ -1,15 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
+#include "traversal.h"
+#include "node.h"
+#include "puzzles.h"
 
 // TODO
 // Figure out how to print the tree
-
-typedef struct Node 
-{
-  int data;
-  struct Node *left;
-  struct Node *right;
-} Node;
+// subtree of binary tree function
 
 Node * create_node(int val)
 {
@@ -53,91 +51,6 @@ void add_node(Node * node, Node * new_node) {
   }
 }
 
-int nodes_in_tree(Node * node) {
-  // Returns the number of nodes in the tree
-  if (node == NULL) {
-    return 0;
-  }
-
-  return 1 + nodes_in_tree(node->left) + nodes_in_tree(node->right);
-
-}
-
-int * inorder_dfs(Node *node, int * inorder_arr) {
-  if (node->left)
-  {
-    inorder_arr = inorder_dfs(node->left, inorder_arr);
-  }
-
-  *inorder_arr = node->data;
-  inorder_arr++;
-
-  if (node->right)
-  {
-    inorder_arr = inorder_dfs(node->right, inorder_arr);
-  }
-
-  return inorder_arr;
-}
-
-int * inorder_traversal(Node * node, size_t node_count) {
-  // Return inorder array from the tree
-  int *inorder_arr = (int*) malloc(sizeof(int)*node_count);
-  int *head = inorder_arr;
-  inorder_dfs(node, inorder_arr);
-  return head;
-}
-
-int * preorder_dfs(Node *node, int * preorder_arr) {
-  *preorder_arr = node->data;
-  preorder_arr++;
-
-  if (node->left != NULL)
-  {
-    preorder_arr = preorder_dfs(node->left, preorder_arr);
-  }
-  
-  if (node->right != NULL)
-  {
-    preorder_arr = preorder_dfs(node->right, preorder_arr);
-  }
-
-  return preorder_arr;
-}
-
-
-int * preorder_traversal(Node * node, size_t node_count) {
-  // return preorder array from the tree
-  int *preorder_arr = (int*) malloc(sizeof(int)*node_count);
-  int *head = preorder_arr;
-  preorder_dfs(node, preorder_arr);
-  return head;
-}
-
-int * postorder_dfs(Node *node, int * postorder_arr) {
-
-  if (node->left != NULL)
-  {
-    postorder_arr = postorder_dfs(node->left, postorder_arr);
-  }
-  
-  if (node->right != NULL)
-  {
-    postorder_arr = postorder_dfs(node->right, postorder_arr);
-  }
-
-  *postorder_arr = node->data;
-  postorder_arr++;
-
-  return postorder_arr;
-}
-
-int * postorder_traversal(Node * node, size_t node_count) {
-  int *postorder_arr = (int*) malloc(sizeof(int)*node_count);
-  int *head = postorder_arr;
-  postorder_dfs(node, postorder_arr);
-  return head;
-}
 
 Node * build_tree_from_preorder(int vals[], int vals_len) {
   // Builds binary tree based a valid tree from an preorder traversal based array
@@ -152,6 +65,17 @@ Node * build_tree_from_preorder(int vals[], int vals_len) {
   }
   return root;
 }
+
+int nodes_in_tree(Node * node) {
+  // Returns the number of nodes in the tree
+  if (node == NULL) {
+    return 0;
+  }
+
+  return 1 + nodes_in_tree(node->left) + nodes_in_tree(node->right);
+
+}
+
 
 void print_tree(Node * node, int tree_height) {
   // TODO 
@@ -180,6 +104,7 @@ void free_tree(Node *node) {
   free_tree(node->right);
   free(node);
 }
+
 
 int main()
 {
@@ -220,6 +145,26 @@ int main()
   printf("\n");
   printf("Tree height: %d\n", height);
   free_tree(head);
+  
+  //contains_subtree
+  printf("\n");
+  int root_preorder[] = {4,2,1,3,5};
+  int subroot_preorder[] = {2,1,3};
+  Node * root = build_tree_from_preorder(root_preorder, sizeof(root_preorder)/sizeof(root_preorder[0]));
+  Node * subroot = build_tree_from_preorder(subroot_preorder, sizeof(subroot_preorder)/sizeof(subroot_preorder[0]));
+  printf("\n");
+  bool subtree = subtree_of_other_tree(root, subroot);
+  if (subtree) {
+    printf("subroot is a subtree of root!\n");
+  } else {
+    printf("subroot is 'not' a subtree of root\n");
+  }
+  printf("\n");
+
 
   return 0;
 }
+
+
+
+
