@@ -39,7 +39,6 @@ Node *build_ll(int vals[], int vals_len) {
 
 void remove_from_idx_n(Node **head, int idx) {
   Node *cur = *head;
-  printf("%d\n", cur->val);
   int i = 0;
   while (cur != NULL) {
     if (i == idx - 1) {
@@ -58,8 +57,9 @@ int main()
   int vals_len = sizeof(vals)/sizeof(vals[0]);
   Node *head = build_ll(vals, vals_len);
   printlist(head);
-  //remove_from_idx_n(&head, 4);
+  remove_from_idx_n(&head, 4);
   printlist(head);
 
   return 0;
 }
+

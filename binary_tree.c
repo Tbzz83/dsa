@@ -184,7 +184,7 @@ void free_tree(Node *node) {
 int main()
 {
   //int vals[] = {14,9,1,5,10,18,17,22,21,24};
-  int vals[] = {2,1,3,4};
+  int vals[] = {7,1,3,2,4};
   Node * head = build_tree_from_preorder(vals, sizeof(vals)/sizeof(vals[0]));
   if (head == NULL)
   {
