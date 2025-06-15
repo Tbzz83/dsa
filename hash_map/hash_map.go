@@ -7,12 +7,15 @@ import (
 
 func HashMap() {
   // ----
-  hashTableSize := 10 // 10 buckets 
-  hashTable := createHashTable(hashTableSize)
-  fmt.Println(hashTable)
+  hSize := 10 // 10 buckets 
+  h := createHashTable(hSize)
+  h.insert("myKey", "myValue")
+  h.insert("otherKey", "otherValue")
+  fmt.Println()
+  fmt.Println("Hash table:")
+  h.printHashTable()
 
-
-
-
+  testValue := h.getValue("fewoinfew")
+  fmt.Println(testValue)
 }
 
