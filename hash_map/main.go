@@ -7,7 +7,4 @@ import (
 func main () {
   fmt.Println("===Hash Map With Go===")
   HashMap()
-
-
-
 }
