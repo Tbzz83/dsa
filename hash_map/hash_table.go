@@ -1,4 +1,4 @@
-package hash_map 
+package main
 
 import (
   "fmt"
@@ -24,10 +24,39 @@ type HashTable struct {
   size int
 }
 
+func (h *HashTable) del(key string) {
+  hash := hashFunction(key)
+  trueHash := hash % h.size
+
+  cur := h.Buckets[trueHash]
+  if cur != nil {
+    if cur.Key == key {
+      // We want to remove first node of ll
+      h.Buckets[trueHash] = cur.Next
+      cur = nil
+      return
+    } else {
+      next := cur.Next
+      for next != nil {
+        // We want to remove some other element of the ll
+        if next.Key == key {
+          cur.Next = next.Next
+          next = nil
+          return
+        }
+        cur = cur.Next
+        next = next.Next
+      }
+    }
+  }
+  fmt.Println("Key error. Key:", key, "does not exist in the hash table.")
+  return
+}
+
 func (h *HashTable) handleCollision(newBucket *Bucket, trueHash int) {
   existingBucket := h.Buckets[trueHash]
   if newBucket.Key == existingBucket.Key {
-    fmt.Println("Key", newBucket.Key, "already exists in hash table.")
+    fmt.Println("Key. Key", newBucket.Key, "already exists in hash table.")
     return
   }
 
@@ -35,7 +64,7 @@ func (h *HashTable) handleCollision(newBucket *Bucket, trueHash int) {
   for existingBucket.Next != nil {
     fmt.Println("Iterating through collided buckets...")
     if newBucket.Key == existingBucket.Key {
-      fmt.Println("Key", newBucket.Key, "already exists in hash table.")
+      fmt.Println("Key error. Key", newBucket.Key, "already exists in hash table.")
       return
     }
     // Make sure key doesn't already exist
@@ -54,7 +83,7 @@ func (h *HashTable) getValue(key string) string {
     }
     curBucket = curBucket.Next
   }
-  fmt.Println("Key:", key, "does not exist in hash map")
+  fmt.Println("Key error: Key:", key, "does not exist in hash map")
   return ""
 }
 
