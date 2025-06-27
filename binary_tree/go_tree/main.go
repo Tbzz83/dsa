@@ -14,4 +14,6 @@ func main() {
   printLevel(root)
   fmt.Println("\nMax depth of binary tree is:", maxDepth(root))
   fmt.Println("\nNumber of good nodes in binary tree is:", goodNodes(root))
+  fmt.Println()
+  BuildCustomTree()
 }
