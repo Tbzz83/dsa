@@ -2,6 +2,18 @@ package main
 
 import "fmt"
 
+/*
+- palindrome reads same forward and backward
+
+- aim for better than On
+
+
+*/
+func dp(s string) int {
+
+
+}
+
 func longestPalindromeSubseqBT(s string) int {
   var backtrack func(l int) int 
 
@@ -14,7 +26,7 @@ func longestPalindromeSubseqBT(s string) int {
 
     for r := l; r <= len(s); r++ {
       if isPalindrome(s[l:r]) {
-        biggest = max(biggest, r - l)
+        biggest = max(biggest, r - l + 1)
       }
 
       biggest = max(biggest, backtrack(r+1))
@@ -40,6 +52,7 @@ func isPalindrome(s string) bool {
 }
 
 func main() {
-  res := longestPalindromeSubseqBT("cbbd")
+  //res := longestPalindromeSubseqBT("cbbd")
+  res := dp("cbbd")
   fmt.Println(res)
 }
