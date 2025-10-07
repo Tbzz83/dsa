@@ -5,8 +5,8 @@ import "fmt"
 
 func longest(s string) string {
 
-  resL := -1
-  resR := -1
+//  resL := -1
+//  resR := -1
 
 
   for i := range(s) {
@@ -14,7 +14,8 @@ func longest(s string) string {
 
   }
 
-  return 
+  return ""
+  
 }
 
 func main() {
