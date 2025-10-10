@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "node.h"
 
-bool same_tree(Node * p, Node * q) {
+inline bool same_tree(Node * p, Node * q) {
   if (p == NULL && q == NULL) {
     return true;
   }
@@ -14,7 +14,7 @@ bool same_tree(Node * p, Node * q) {
   return same_tree(p->left, q->left) && same_tree(p->right, q->right);
 }
 
-bool subtree_of_other_tree(Node * root, Node * subroot) {
+inline bool subtree_of_other_tree(Node * root, Node * subroot) {
   if (subroot == NULL) {
     return true;
   } else if (root == NULL) {
