@@ -1,6 +1,6 @@
 #include "node.h"
 #include <stdlib.h>
-int * inorder_dfs(Node *node, int * inorder_arr) {
+inline int * inorder_dfs(Node *node, int * inorder_arr) {
   if (node->left)
   {
     inorder_arr = inorder_dfs(node->left, inorder_arr);
@@ -17,7 +17,7 @@ int * inorder_dfs(Node *node, int * inorder_arr) {
   return inorder_arr;
 }
 
-int * inorder_traversal(Node * node, size_t node_count) {
+inline int * inorder_traversal(Node * node, size_t node_count) {
   // Return inorder array from the tree
   int *inorder_arr = (int*) malloc(sizeof(int)*node_count);
   int *head = inorder_arr;
@@ -25,7 +25,7 @@ int * inorder_traversal(Node * node, size_t node_count) {
   return head;
 }
 
-int * preorder_dfs(Node *node, int * preorder_arr) {
+inline int * preorder_dfs(Node *node, int * preorder_arr) {
   *preorder_arr = node->data;
   preorder_arr++;
 
@@ -43,7 +43,7 @@ int * preorder_dfs(Node *node, int * preorder_arr) {
 }
 
 
-int * preorder_traversal(Node * node, size_t node_count) {
+inline int * preorder_traversal(Node * node, size_t node_count) {
   // return preorder array from the tree
   int *preorder_arr = (int*) malloc(sizeof(int)*node_count);
   int *head = preorder_arr;
@@ -51,7 +51,7 @@ int * preorder_traversal(Node * node, size_t node_count) {
   return head;
 }
 
-int * postorder_dfs(Node *node, int * postorder_arr) {
+inline int * postorder_dfs(Node *node, int * postorder_arr) {
 
   if (node->left != NULL)
   {
@@ -69,7 +69,7 @@ int * postorder_dfs(Node *node, int * postorder_arr) {
   return postorder_arr;
 }
 
-int * postorder_traversal(Node * node, size_t node_count) {
+inline int * postorder_traversal(Node * node, size_t node_count) {
   int *postorder_arr = (int*) malloc(sizeof(int)*node_count);
   int *head = postorder_arr;
   postorder_dfs(node, postorder_arr);
