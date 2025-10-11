@@ -28,7 +28,7 @@
 #
 # What if we use a min heap to store the ord(c) where c == tasks[i]
 #
-# We can keep track of the lask task scheduled (last_scheduled = ord(task[i]))
+# We can keep track of the last task scheduled (last_scheduled = ord(task[i]))
 #
 # While the heap is non empty, and the current min value == last_scheduled, pop from the heap and store those
 # values temporarily in 'to_be_processed: list or queue'??
@@ -40,15 +40,53 @@
 # If the heap is empty, but to_be_processed is full, there must be leftover elements that couldn't be processed in round robin with something else. Will have to increment cycles  += n * len(to_be_processed) before returning cycles
 
 import heapq
+import collections
 
-def leastInterval(tasks: List[str], n: int) -> int:
-  # convert to ASCII
-  tasks = [ord(t) for t in tasks]
+def leastInterval(tasks: list[str], n: int) -> int: 
+    time = 0
+    queue = collections.deque()
+    counts = collections.Counter(tasks)
+    count_heap = []
 
-  tasks = heapq.heapify(tasks)
+    # Get frequencies, build heap
+    for count in counts.values():
+        heapq.heappush(count_heap, -count)
+
+    while len(queue) > 0 or len(count_heap) > 0:
+        print("queue: ", queue)
+        print("heap: ", count_heap)
+
+        if len(queue) > 0 and queue[0][1] == time:
+            # more efficient that individual push and pop
+            cur_task = heapq.heappushpop(count_heap, queue.popleft()[0])
+        elif len(count_heap) > 0:
+            cur_task = heapq.heappop(count_heap)
+        else:
+            time += 1
+            continue
+
+        # Schedule 1 task
+        cur_task += 1
+
+        if cur_task != 0:
+            available_at = time + n + 1
+            queue.append((cur_task, available_at))
+
+        time += 1
+
+    return time
+
+
+
+
+
+
 
 def main():
-  print(leastInterval(["x","x","y","y"], 2))
+    print(leastInterval(["x","x","y","y"], 2))
+    print()
+    print(leastInterval(["A","A","A","B","C"], 3))
+    print()
 
 if __name__ == "__main__":
-  main()
+    main()
