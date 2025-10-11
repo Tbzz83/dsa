@@ -76,12 +76,6 @@ def leastInterval(tasks: list[str], n: int) -> int:
 
     return time
 
-
-
-
-
-
-
 def main():
     print(leastInterval(["x","x","y","y"], 2))
     print()
