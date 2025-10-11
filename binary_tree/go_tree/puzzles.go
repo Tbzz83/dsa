@@ -20,6 +20,11 @@ func goodNodes(node *treeNode) int {
   return count
 }
 
+func invertTree(node *treeNode) {
+
+
+}
+
 func goodNodesDfs(node *treeNode, maxi int, count *int) {
   if node == nil {
     return

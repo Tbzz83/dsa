@@ -16,4 +16,7 @@ func main() {
   fmt.Println("\nNumber of good nodes in binary tree is:", goodNodes(root))
   fmt.Println()
   BuildCustomTree()
+
+
+	fmt.Println()
 }
