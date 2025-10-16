@@ -22,18 +22,20 @@
 # Could be done both recursively or iteratively. Let's try recursive DFS
 
 from typing import Optional
-
+from ..Intro.main import iterative_DFS
 
 class Node:
     def __init__(self, val = 0, neighbors: list[Optional["Node"]] = []) -> None:
         self.val = val
-        self.neighbors: list[Node] = neighbors if neighbors else []
+        self.neighbors: list[Node | None] = neighbors if neighbors else []
 
 def cloneGraph(self, node: Optional["Node"]) -> Optional["Node"]:
     pass
 
 def main():
+    a: list[list[int]] = [[0,1], [1,2], [0,3], [3,4], [3,6], [3,7], [4,2], [4,5], [5,2]]
     pass
 
 if __name__ == "__main__":
     main()
+
