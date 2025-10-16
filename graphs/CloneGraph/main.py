@@ -22,24 +22,50 @@
 # Could be done both recursively or iteratively. Let's try recursive DFS
 
 from typing import Optional
-from ..Intro.main import iterative_DFS
+from Intro.main import build_nodes_from_adj_map, convert_edges_list_to_adj_map, iterative_BFS_from_nodes
+from Intro.node import Node 
 
+def cloneGraph(node: Optional["Node"]) -> Optional["Node"]:
+    if not node:
+        return None
 
-class Node:
-    def __init__(self, val=0, neighbors: list[Optional["Node"]] = []) -> None:
-        self.val = val
-        self.neighbors: list[Node | None] = neighbors if neighbors else []
+    seen: dict[int, Node] = {}
 
+    new_root = Node(1)
 
-def cloneGraph(self, node: Optional["Node"]) -> Optional["Node"]:
-    pass
+    def dfs(cur_new: Node, cur_template: Node):
+        if cur_new.val in seen:
+            return
+        
+        seen[cur_new.val] = cur_new
 
+        for child_node in cur_template.neighbors:
+            if child_node.val in seen:
+                new_child: Node = seen[child_node.val]
+            else:
+                new_child: Node = Node(child_node.val)
+
+            cur_new.neighbors.append(new_child)
+
+            dfs(new_child, child_node)
+
+    dfs(new_root, node)
+
+    return new_root
 
 def main():
-    a: list[list[int]] = [[0, 1], [1, 2], [0, 3], [
-        3, 4], [3, 6], [3, 7], [4, 2], [4, 5], [5, 2]]
-    pass
+    a: list[list[int]] = [[1,2], [2,3]] 
+    adj_map = convert_edges_list_to_adj_map(a, "undirected")
+    print(adj_map)
 
+    root: Node|None = build_nodes_from_adj_map(adj_map, 1)
+    if not isinstance(root, Node):
+        print("FAILED")
+        return
+    
+    new_root = cloneGraph(root)
+    if new_root:
+        iterative_BFS_from_nodes(new_root)
 
 if __name__ == "__main__":
     main()
