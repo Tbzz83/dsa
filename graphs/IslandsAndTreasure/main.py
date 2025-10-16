@@ -20,6 +20,8 @@
 #- if cell == 0, treasure is in that cell. Max distance therefore is 0.
 #- if a cell is touching a 0, the max distance is then set to 1.
 
+from collections import deque
+
 def print_grid(grid):
     for row in grid:
         print(row)
@@ -30,54 +32,42 @@ def islandsAndTreasure(grid: list[list[int]]) -> None:
 
     ROWS, COLS = len(grid), len(grid[0])
 
-    def in_range(r,c) -> bool:
-        return r in range(ROWS) and c in range(COLS)
+    visited: set[tuple[int,int]] = set()
+    q = deque()
 
-    seen: set[tuple[int, int]] = set()
-
-    def dfs(r: int, c: int):
-        if r not in range(ROWS) or c not in range(COLS):
+    def add_land(r: int,c: int):
+        if r not in range(ROWS) or c not in range(COLS) or grid[r][c] == -1 or (r,c) in visited:
             return
 
-        if grid[r][c] == 0:
-            # Nothing to do
-            return
-        
-        print(grid[r][c])
-        seen.add((r,c))
+        q.append((r,c))
+        visited.add((r,c))
 
-        #RIGHT
-        if (r,c+1) not in seen:
-            dfs(r,c+1)
-        #LEFT
-        if (r,c-1) not in seen:
-            dfs(r,c-1)
-        #DOWN
-        if (r+1,c) not in seen:
-            dfs(r+1,c)
-        #UP
-        if (r-1,c) not in seen:
-            dfs(r-1,c)
-    dfs(0,0)
-       
-#    for r in range(ROWS):
-#        for c in range(COLS):
-#            val = grid[r][c]
-#
-#            # if land 
-#            if val == 2147483647:
-#                dfs(r,c)
+    for r in range(ROWS):
+        for c in range(COLS):
+            if grid[r][c] == 0:
+                q.append((r,c))
+                visited.add((r,c))
 
+    dist = 0
 
+    while q:
+        for _ in range(len(q)):
+            r,c = q.popleft()
+            grid[r][c] = dist
+            add_land(r+1, c)
+            add_land(r-1, c)
+            add_land(r, c+1)
+            add_land(r, c-1)
+        dist += 1
 
 def main():
-    #grid = [[2147483647,-1,0,2147483647],[2147483647,2147483647,2147483647,-1],[2147483647,-1,2147483647,-1],[0,-1,2147483647,2147483647]]
-    grid = [
-        [2147483647, 0],
-        [2147483647, 2147483647],
-    ]
-    print_grid(grid)
+    grid = [[2147483647,-1,0,2147483647],[2147483647,2147483647,2147483647,-1],[2147483647,-1,2147483647,-1],[0,-1,2147483647,2147483647]]
+#    grid = [
+#        [2147483647, 0],
+#        [2147483647, 2147483647],
+#    ]
     islandsAndTreasure(grid)
+    print_grid(grid)
 
 if __name__ == "__main__":
     main()
