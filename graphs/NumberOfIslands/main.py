@@ -15,6 +15,7 @@
 # Assume our grid is square
 from collections import deque
 
+
 def numIslands(grid: list[list[str]]) -> int:
 
     islands: int = 0
@@ -77,6 +78,7 @@ def main():
     ]
 
     print(numIslands(grid))
+
 
 if __name__ == "__main__":
     main()

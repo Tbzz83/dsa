@@ -15,6 +15,7 @@
 # Assume our grid is square
 from collections import deque
 
+
 def maxAreaOfIsland(grid: list[list[int]]) -> int:
 
     max_area: list[int] = [0]
@@ -60,15 +61,17 @@ def maxAreaOfIsland(grid: list[list[int]]) -> int:
 
     return max_area[0]
 
+
 def main():
     grid = [
-      [0,1,1,0,1],
-      [1,0,1,0,1],
-      [0,1,1,0,1],
-      [0,1,0,0,1]
+        [0, 1, 1, 0, 1],
+        [1, 0, 1, 0, 1],
+        [0, 1, 1, 0, 1],
+        [0, 1, 0, 0, 1]
     ]
 
     print(numIslands(grid))
+
 
 if __name__ == "__main__":
     main()
