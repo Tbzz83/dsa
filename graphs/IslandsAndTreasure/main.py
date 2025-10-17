@@ -9,16 +9,6 @@
 #Assume the grid can only be traversed up, down, left, or right.
 #
 #Modify the grid in-place.
-#
-#
-#- We need to iterate over every land cell and calculate for each cell, the distance to the closest treasure chest.
-
-#- if a cell already a distance set, we can use that when recursing.
-
-#- Probably going to want to use DFS and explore all possible paths.
-
-#- if cell == 0, treasure is in that cell. Max distance therefore is 0.
-#- if a cell is touching a 0, the max distance is then set to 1.
 
 from collections import deque
 
@@ -30,35 +20,52 @@ def islandsAndTreasure(grid: list[list[int]]) -> None:
     if len(grid) == 0:
         return
 
+    q: deque[tuple[int, int]] = deque()
+    s: set[tuple[int, int]] = set()
+
     ROWS, COLS = len(grid), len(grid[0])
 
-    visited: set[tuple[int,int]] = set()
-    q = deque()
+    # Checks if coord valid ? append to q : return
+    def add_to_q(coord: tuple[int, int]) -> None:
+        r, c = coord
 
-    def add_land(r: int,c: int):
-        if r not in range(ROWS) or c not in range(COLS) or grid[r][c] == -1 or (r,c) in visited:
-            return
+        if (r not in range(ROWS) or 
+            c not in range(COLS) or
+            coord in s or
+            grid[r][c] == -1):
+            return 
 
-        q.append((r,c))
-        visited.add((r,c))
+        q.append(coord)
+        s.add(coord)
 
+    # init the queue with treasure coords
     for r in range(ROWS):
         for c in range(COLS):
-            if grid[r][c] == 0:
+            val = grid[r][c]
+            if val == 0:
                 q.append((r,c))
-                visited.add((r,c))
+                s.add((r,c))
 
-    dist = 0
-
+    distance_from_treasure: int = 0
+    # Do BFS starting from treasure coords
     while q:
-        for _ in range(len(q)):
-            r,c = q.popleft()
-            grid[r][c] = dist
-            add_land(r+1, c)
-            add_land(r-1, c)
-            add_land(r, c+1)
-            add_land(r, c-1)
-        dist += 1
+        q_len = len(q)
+
+        for _ in range(q_len):
+            # Only get valid coords from the q
+            r, c = q.popleft()
+            grid[r][c] = distance_from_treasure
+
+            # LEFT
+            add_to_q((r, c-1))
+            # RIGHT
+            add_to_q((r, c+1))
+            # UP
+            add_to_q((r-1, c))
+            # DOWN
+            add_to_q((r+1, c))
+
+        distance_from_treasure += 1
 
 def main():
     grid = [[2147483647,-1,0,2147483647],[2147483647,2147483647,2147483647,-1],[2147483647,-1,2147483647,-1],[0,-1,2147483647,2147483647]]
