@@ -1,4 +1,4 @@
-#You are given an array prerequisites where prerequisites[i] = [a, b] indicates that you must take course b first if you want to take course a.
+#Yo[=eryp]u are given an array prerequisites where prerequisites[i] = [a, b] indicates that you must take course b first if you want to take course a.
 #
 #The pair [0, 1], indicates that must take course 1 before taking course 0.
 #
@@ -16,8 +16,13 @@ from Intro.main import convert_edges_list_to_adj_map
 def canFinish(numCourse: int, prerequisites: list[list[int]]) -> bool:
     # 1.
     adj_map = convert_edges_list_to_adj_map(prerequisites)
+    num_nodes_seen: set[int] = set()
 
-    def dfs(node: int) -> bool:
+    def dfs(node: int, seen: set[int]) -> bool:
+        # Need this for counting at end
+        if node not in num_nodes_seen:
+            num_nodes_seen.add(node)
+
         # 3. 
         if node in seen:
             return False
@@ -25,26 +30,29 @@ def canFinish(numCourse: int, prerequisites: list[list[int]]) -> bool:
         seen.add(node)
 
         if node not in adj_map:
+            seen.remove(node)
             # End node, doesn't have any edges to anyone
             return True
 
         for neighbor in adj_map[node]:
-            if not dfs(neighbor):
+            if not dfs(neighbor, seen):
+                seen.remove(node)
                 return False
 
-        return True
+        seen.remove(node)
 
+        return True
     # 2. 
     for node in adj_map.keys():
-        seen: set[int] = set()
-        if not dfs(node) or len(seen) < numCourse:
+        res = dfs(node, set())
+        if not res:
             return False
 
-    return True
+    return len(num_nodes_seen) >= numCourse
 
 def main():
     prerequisites=[[1,4],[2,4],[3,1],[3,2]]
-    print(canFinish(2,prerequisites))
+    print(canFinish(5,prerequisites))
 
 
 if __name__ == "__main__":
