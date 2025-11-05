@@ -1,18 +1,3 @@
-# Given a 2D grid grid where '1' represents land and '0' represents water, count and return the number of islands.
-#
-# An island is formed by connecting adjacent lands horizontally or vertically and is surrounded by water. You may assume water is surrounding the grid (i.e., all the edges are water).
-# Traverse through all coords on our grid. If we encounter land ("1"), then we can traverse starting from that point,
-# and find all regions of land that come into direct contact with it.
-#
-# We will use a seen set, to keep track of coords that we have visited set(tuple[int])
-#
-# Only traverse if the current coord we are on is not in the seen set
-#
-# Ignore "0"
-#
-# Once a "1" is found, increment islands++ so long as that coord is not in the seen set
-#
-# Assume our grid is square
 from collections import deque
 
 
@@ -70,7 +55,7 @@ def main():
         [0, 1, 0, 0, 1]
     ]
 
-    print(numIslands(grid))
+    print(maxAreaOfIsland(grid))
 
 
 if __name__ == "__main__":
