@@ -46,7 +46,6 @@ func lengthOfLISTab(nums []int) int {
 	var res = 1
 	tab := []int{}
 
-
 	for i := range(nums) {
 		tab = append(tab, 1)
 
@@ -61,9 +60,7 @@ func lengthOfLISTab(nums []int) int {
 
 	fmt.Println(tab)
 
-
 	return res
-
 }
 
 func main() {
