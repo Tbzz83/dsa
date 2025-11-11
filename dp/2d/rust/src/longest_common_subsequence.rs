@@ -1,5 +1,7 @@
 use crate::common::Solution;
 
+//TODO look into iterative solution https://www.youtube.com/watch?time_continue=1018&v=Ua0GhsJSlWM&embeds_referring_euri=https%3A%2F%2Fneetcode.io%2F&embeds_referring_origin=https%3A%2F%2Fneetcode.io&source_ve_path=Mjg2NjY
+
 impl Solution {
     pub fn longest_common_subsequence(text1: String, text2: String) -> i32 {
         let mut memo: Vec<Vec<i32>> = vec![];
