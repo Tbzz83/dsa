@@ -16,43 +16,35 @@
 from collections import defaultdict
 class Solution:
     def isInterleave(self, s1: str, s2: str, s3: str) -> bool:
-        cache: dict[tuple[int, int], list[int]] = defaultdict(list)
+        cache: dict[tuple[int, int], bool] = {}
         s1_len, s2_len, s3_len = len(s1), len(s2), len(s3)
 
-        def dp(i1, i2, i3) -> int:
-            if i1 == s1_len and i2 == s2_len and i3 == s3_len:
-                return 0
-            elif i1 == s1_len and i2 == s2_len and i3 < s3_len:
-                return 1
-            elif (i1 < s1_len or i2 < s2_len) and i3 == s3_len:
-                return 1
+        if s1_len + s2_len != s3_len:
+            return False
+
+        def dp(i1, i2) -> bool:
+            if i1 == s1_len and i2 == s2_len:
+                return True
             
             if (i1, i2) not in cache:
-                cache[(i1, i2)] = [-1 for _ in range(s3_len + 1)]
+                ok = False
 
-            # -1 means non-initialized
-            if cache[(i1, i2)][i3] == -1:
-                if i1 in range(s1_len):
-                    if s1[i1] == s3[i3]:
-                        cache[(i1, i2)][i3] = dp(i1+1, i2, i3+1)
-                    else:
-                        cache[(i1, i2)][i3] = 1
+                if i1 < s1_len and s1[i1] == s3[i1+i2]:
+                    ok = dp(i1+1, i2)
 
-                if cache[(i1, i2)][i3] != 0:
-                    if i2 in range(s2_len):
-                        if s2[i2] == s3[i3]:
-                            cache[(i1, i2)][i3] = dp(i1, i2+1, i3+1)
-                        else:
-                            cache[(i1, i2)][i3] = 1
+                if i2 < s2_len and s2[i2] == s3[i1+i2] and not ok:
+                    ok = dp(i1, i2+1)
 
-            return cache[(i1, i2)][i3]
+                cache[(i1, i2)] = ok
 
-        return dp(0,0,0) == 0
+            return cache[(i1, i2)]
+
+        return dp(0,0)
 
 def main(): 
-    s1 = "aaaa"
-    s2 = "bbbb"
-    s3 = "aabbbbaa"
+    s1 = "ab"
+    s2 = "ac"
+    s3 = "aabc"
     sol = Solution()
     print(sol.isInterleave(s1, s2, s3))
 
