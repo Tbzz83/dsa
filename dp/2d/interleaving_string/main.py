@@ -24,6 +24,8 @@ class Solution:
                 return 0
             elif i1 == s1_len and i2 == s2_len and i3 < s3_len:
                 return 1
+            elif (i1 < s1_len or i2 < s2_len) and i3 == s3_len:
+                return 1
             
             if (i1, i2) not in cache:
                 cache[(i1, i2)] = [-1 for _ in range(s3_len + 1)]
@@ -48,9 +50,9 @@ class Solution:
         return dp(0,0,0) == 0
 
 def main(): 
-    s1 = "a"
-    s2 = "b"
-    s3 = "aba"
+    s1 = "aaaa"
+    s2 = "bbbb"
+    s3 = "aabbbbaa"
     sol = Solution()
     print(sol.isInterleave(s1, s2, s3))
 
