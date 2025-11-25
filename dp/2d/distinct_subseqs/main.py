@@ -23,9 +23,7 @@ class Solution:
         s_len, t_len = len(s), len(t)
 
         def dp(si, ti) -> int:
-            if si >= s_len and ti >= t_len:
-                return 1
-            elif ti >= t_len:
+            if ti >= t_len:
                 return 1
             elif si >= s_len:
                 return 0
@@ -42,7 +40,7 @@ class Solution:
 
             cache[key] = pick+skip
 
-            return cache[(si, ti)]
+            return cache[key]
 
         return dp(0,0)
             
