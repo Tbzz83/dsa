@@ -4,20 +4,21 @@ use crate::node::Node;
 
 mod node;
 
-struct Data {
-    val: Option<Rc<i32>>,
-}
-
 fn main() {
 
-    let mut head = Node::new(1);
+    let mut head = Node::new("a");
 
-    head.push(2);
-    head.push(3);
-    head.push(4);
-    head.push(5);
+    head.push("b");
+    head.push("c");
+    head.push("d");
+    head.push("e");
     //head.delete_ith(1);
     head.print();
+    head = head.delete_ith(3).unwrap();
+    head.print();
+
+    let x = Rc::new(10);
+    *x += 1;
 
     //head.delete_ith(1);
 }
