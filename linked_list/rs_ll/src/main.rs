@@ -1,24 +1,123 @@
 use std::rc::Rc;
 
-use crate::node::Node;
+// --- Data Structures ---
 
-mod node;
+pub struct List<T> {
+    head: Link<T>,
+}
+
+type Link<T> = Option<Rc<Node<T>>>;
+
+struct Node<T> {
+    elem: T,
+    next: Link<T>,
+}
+
+// --- Implementation ---
+
+impl<T> List<T> {
+    pub fn new() -> Self {
+        List { head: None }
+    }
+
+    pub fn prepend(&self, elem: T) -> List<T> {
+        List {
+            head: Some(Rc::new(Node {
+                elem: elem,
+                next: self.head.clone(),
+            })),
+        }
+    }
+
+    pub fn tail(&self) -> List<T> {
+        List {
+            head: self.head.as_ref().and_then(|node| node.next.clone()),
+        }
+    }
+
+    pub fn head(&self) -> Option<&T> {
+        self.head.as_ref().map(|node| &node.elem)
+    }
+
+    pub fn iter(&self) -> Iter<'_, T> {
+        Iter {
+            next: self.head.as_deref(),
+        }
+    }
+}
+
+// Custom Drop to handle recursive deallocation without blowing the stack
+impl<T> Drop for List<T> {
+    fn drop(&mut self) {
+        let mut head = self.head.take();
+        while let Some(node) = head {
+            if let Ok(mut node) = Rc::try_unwrap(node) {
+                head = node.next.take();
+            } else {
+                break;
+            }
+        }
+    }
+}
+
+// --- Iterator ---
+
+pub struct Iter<'a, T> {
+    next: Option<&'a Node<T>>,
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.next.map(|node| {
+            self.next = node.next.as_deref();
+            &node.elem
+        })
+    }
+}
+
+// --- Entry Point ---
 
 fn main() {
+    let list = List::new().prepend(1).prepend(2).prepend(3);
+    println!("Head of list: {:?}", list.head());
+}
 
-    let mut head = Node::new("a");
+// --- Tests ---
 
-    head.push("b");
-    head.push("c");
-    head.push("d");
-    head.push("e");
-    //head.delete_ith(1);
-    head.print();
-    head = head.delete_ith(3).unwrap();
-    head.print();
+#[cfg(test)]
+mod test {
+    use super::*; // Now imports everything from the outer scope
 
-    let x = Rc::new(10);
-    *x += 1;
+    #[test]
+    fn basics() {
+        let list = List::new();
+        assert_eq!(list.head(), None);
 
-    //head.delete_ith(1);
+        let list = list.prepend(1).prepend(2).prepend(3);
+        assert_eq!(list.head(), Some(&3));
+
+        let list = list.tail();
+        assert_eq!(list.head(), Some(&2));
+
+        let list = list.tail();
+        assert_eq!(list.head(), Some(&1));
+
+        let list = list.tail();
+        assert_eq!(list.head(), None);
+
+        let list = list.tail();
+        assert_eq!(list.head(), None);
+    }
+
+    #[test]
+    fn iter() {
+        let list = List::new().prepend(1).prepend(2).prepend(3);
+
+        let mut iter = list.iter();
+        assert_eq!(iter.next(), Some(&3));
+        assert_eq!(iter.next(), Some(&2));
+        assert_eq!(iter.next(), Some(&1));
+    }
 }
