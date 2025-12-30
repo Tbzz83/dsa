@@ -9,10 +9,20 @@ pub struct LinkedList<T> {
 type Link<T> = Option<Rc<RefCell<Node<T>>>>;
 
 #[derive(Debug)]
-struct Node<T> {
-    value: Option<T>,
+pub struct Node<T> {
+    pub value: Option<T>,
     next: Link<T>,
     prev: Link<T>,
+}
+
+impl <T>Iterator for LinkedList<T> {
+    type Item = Link<T>;
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.pop_left() {
+            Some(node) => return Some(Some(node)),
+            None => return None,
+        }
+    }
 }
 
 impl <T>LinkedList<T> {
@@ -20,15 +30,15 @@ impl <T>LinkedList<T> {
         LinkedList { head: None, tail: None }
     }
 
-    fn peek_left(&self) -> &Link<T> {
+    pub fn peek_left(&self) -> &Link<T> {
         &self.head
     }
 
-    fn peek_right(&self) -> &Link<T> {
+    pub fn peek_right(&self) -> &Link<T> {
         &self.tail
     }
 
-    fn append(&mut self, value: T) {
+    pub fn append(&mut self, value: T) {
         let new_link: Link<T> = Some(Rc::new(RefCell::new(
             Node::new(value)
         )));
@@ -55,7 +65,7 @@ impl <T>LinkedList<T> {
         }
     }
 
-    fn push(&mut self, value: T) {
+    pub fn push(&mut self, value: T) {
         let new_link: Link<T> = Some(Rc::new(RefCell::new(
             Node::new(value)
         )));
@@ -83,7 +93,7 @@ impl <T>LinkedList<T> {
         }
     }
 
-    fn pop(&mut self) -> Link<T> {
+    pub fn pop(&mut self) -> Link<T> {
         if self.tail.is_none() {
             return None;
         }
@@ -108,7 +118,7 @@ impl <T>LinkedList<T> {
     }
 
     // Pops from the left
-    fn pop_left(&mut self) -> Link<T> {
+    pub fn pop_left(&mut self) -> Link<T> {
         if self.head.is_none() {
             return None;
         }
