@@ -1,25 +1,21 @@
-use std::iter::{Zip, zip};
-
-fn knapsack(mut max_weight: i32, profits: Vec<i32>, weights: Vec<i32>) -> i32 {
-    let mut total_profit: i32 = 0;
-    let data: Vec<(i32, i32)>;
-
-    let mut data = weights
+fn knapsack(mut max_weight: i32, profits: Vec<i32>, weights: Vec<i32>) -> f64 {
+    let mut total_profit: f64 = 0.0;
+    let mut idx_profit_by_weight: Vec<(usize, f64)>;
+    idx_profit_by_weight = weights
         .iter()
         .enumerate()
         .map(|(i,&w)| (i, profits[i] as f64/ w as f64))
-        //.map(|(i,&w)| (i, profits[i] / w ))
-        .collect::<Vec<(usize, f64)>>();
+        .collect();
         
-    data.sort_by(|a,b| b.1.partial_cmp(&a.1).unwrap());
+    idx_profit_by_weight.sort_by(|a,b| b.1.partial_cmp(&a.1).unwrap());
 
-    for (i, _) in data {
-
+    for (i, _) in idx_profit_by_weight {
         if weights[i] > max_weight {
-            todo!();
+            total_profit += profits[i] as f64 * (max_weight as f64 / weights[i] as f64);
+            break;
         }
 
-        total_profit += profits[i];
+        total_profit += profits[i] as f64;
         max_weight -= weights[i];
     }
 
