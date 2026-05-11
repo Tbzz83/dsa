@@ -130,7 +130,9 @@ def main():
         3, 4], [3, 6], [3, 7], [4, 2], [4, 5], [5, 2]]
 
     adj_mtrx = convert_edges_list_to_adj_mtrx(a, n)
+    print("Adj mtrx: ", adj_mtrx)
     adj_map = convert_edges_list_to_adj_map(a)
+    print("Adj map: ", adj_map)
     print("\n---Recursive DFS---")
     recursive_DFS(adj_map, 0)
     print("\n---Iterative DFS---")
