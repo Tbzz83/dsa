@@ -27,10 +27,4 @@ class Solution:
 
 sol = Solution()
 nums = [1,2,3]
-print(sol.subsets(nums))
-
-l1 = [1,2,3]
-l2 = [1,2,3]
-l1.pop()
-l2 = l2[:len(l2)-1]
-print(l1,l2)
+assert sol.subsets(nums),  [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]
