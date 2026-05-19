@@ -1,27 +1,33 @@
-# Given an integer array nums that may contain duplicates, return all possible (the power set).
-# 
-# The solution set must not contain duplicate subsets. Return the solution in any order.
+
+import copy
 
 class Solution:
     def subsetsWithDup(self, nums: list[int]) -> list[list[int]]:
-        subsets: list[list[int]] = []
-        def backtrack(idx: int, subset: list[int]):
-            if idx >= len(nums):
-                subsets.append(subset.copy())
+        res = []
+        nums.sort()
+        def backtrack(i: int, subset: list[int]):
+            print(subset)
+            if i >= len(nums):
+                res.append(subset.copy())
                 return
 
-            subset.append(nums[idx])
-            backtrack(idx+1, subset)
+            # pick
+            subset.append(nums[i])
+            backtrack(i+1, subset)
+
+            # skip
             subset.pop()
-            while idx+1 < len(nums) and nums[idx+1] == nums[idx]:
-                idx += 1
-            backtrack(idx+1, subset)
+            j = i
+            while j < len(nums) and nums[j] == nums[i]:
+                j += 1
+
+            backtrack(j, subset)
         backtrack(0, [])
-        return subsets
 
-def main():
-    sol = Solution()
-    print(sol.subsetsWithDup([1,2,2,3]))
+        return res
 
-if __name__ == "__main__":
-    main()
+sol = Solution()
+nums = [1,2,1]
+
+print(sol.subsetsWithDup(nums))
+#assert sol.subsetsWithDup(nums), [[],[1],[1,2],[1,1],[1,2,1],[2]]
