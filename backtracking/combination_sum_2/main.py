@@ -10,9 +10,28 @@ class Solution:
     def combinationSum2(self, candidates: list[int], target: int) -> list[list[int]]:
         res = []
 
-        def backtrack():
-            pass
+        candidates.sort()
 
+        def backtrack(i: int, subset: list[int], cur_sum: int):
+            if cur_sum == target:
+                res.append(subset.copy())
+                return
+            elif i >= len(candidates) or cur_sum > target:
+                return
+
+            # Pick
+            subset.append(candidates[i])
+            backtrack(i+1, subset, cur_sum + candidates[i])
+            subset.pop()
+
+            # Skip
+            j = i + 1
+            while j < len(candidates) and candidates[j] == candidates[i]:
+                j += 1
+
+            backtrack(j, subset, cur_sum)
+
+        backtrack(0, [], 0)
         return res
 
 
