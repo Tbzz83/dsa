@@ -25,6 +25,13 @@ class Solution:
                 dfs(i + 1, path, cur + candidates[i])
                 path.pop()
 
+                # NOTE
+                # You don't need to call backtrack again here (like you would in the below method)
+                # Because you are in a for loop, next iteration already includes the fact that the prior iterations
+                # subset has the skip case (worded pretty poorly)
+                # Add the below line and see what happens
+                # dfs(i + 1, path, cur)
+
         dfs(0, [], 0)
         return res
 
