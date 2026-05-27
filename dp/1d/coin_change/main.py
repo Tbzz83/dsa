@@ -4,39 +4,25 @@ You are given an integer array coins representing coins of different denominatio
 Return the fewest number of coins that you need to make up the exact target amount. If it is impossible to make up the amount, return -1.
 
 You may assume that you have an unlimited number of each coin.
-
-[2,3], target = 5
-
-
 '''
-
-from functools import cache
 
 
 class Solution:
     def coinChange(self, coins: list[int], amount: int) -> int:
         memo = {}
+        def dp(i: int, amt: int) -> int:
+            if amt == 0:
+                memo[(i,amt)] = 1
+                return memo[(i,amt)]
 
-        def dfs(i: int, amt: int) -> int:
-            if i >= len(coins):
-                return 0 if amt == 0 else -1
+            elif amt < 0 or i >= len(coins):
+                return -1
+            return memo[(i,amt)]
 
-            if amt not in memo:
-                take = 0
-                if coins[i] <= amt:
-                    take = dfs(i, amt-coins[i])
-                skip = dfs(i+1, amt)
-                memo[amt] = min(take,skip)
-            return memo[amt]
-
-        ans = dfs(0,amount)
+        res = dp(0,amount)
         print(memo)
-        return ans
+        return res
 
-def main():
-    sol = Solution()
-    coins = [1,3]
-    print(sol.coinChange(coins, 4))
+sol = Solution()
 
-if __name__ == "__main__":
-    main()
+print(sol.coinChange([1,5,10], 12))
