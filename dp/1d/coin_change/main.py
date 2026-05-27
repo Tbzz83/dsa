@@ -6,23 +6,51 @@ Return the fewest number of coins that you need to make up the exact target amou
 You may assume that you have an unlimited number of each coin.
 '''
 
-
 class Solution:
     def coinChange(self, coins: list[int], amount: int) -> int:
         memo = {}
-        def dp(i: int, amt: int) -> int:
+
+        def dp(amt: int) -> int|float:
             if amt == 0:
-                memo[(i,amt)] = 1
-                return memo[(i,amt)]
+                return 0
+            if amt < 0:
+                # Not possible
+                return float('inf')
 
-            elif amt < 0 or i >= len(coins):
-                return -1
-            return memo[(i,amt)]
+            if amt not in memo:
+                res = float('inf')
+                for coin in coins:
+                    amt_needed = 1 + dp(amt-coin)
+                    res = min(res, amt_needed)
 
-        res = dp(0,amount)
-        print(memo)
-        return res
+                memo[amt] = res
+
+            return memo[amt]
+        
+        res = dp(amount)
+        
+        return -1 if res == float('inf') else int(res)
+
+    def coinChange_backtrack(self, coins: list[int], amount: int) -> int:
+        res = float('inf')
+
+        def backtrack(amt: int, iters: int):
+            if amt == 0:
+                nonlocal res
+                res = min(res, iters)
+                return
+            if amt < 0:
+                return
+
+            for coin in coins:
+                # Pick
+                backtrack(amt - coin, iters + 1)
+
+        backtrack(amount,0)
+
+        return -1 if res == float('inf') else int(res)
 
 sol = Solution()
 
+print(sol.coinChange_backtrack([1,5,10], 12))
 print(sol.coinChange([1,5,10], 12))
