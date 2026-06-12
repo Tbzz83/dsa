@@ -125,8 +125,8 @@ func maxSubArray(nums []int) int {
 func main() {
 
   //fmt.Println(simple([]int{-2,1,-3,4,-1,2,1,-5,4}))
-  fmt.Println(simple([]int{5,4,-1,7,8}))
-  //fmt.Println(dp([]int{-2,1,-3,4}))
+  //fmt.Println(simple([]int{5,4,-1,7,8}))
+  fmt.Println(dp([]int{-2,1,-3,4}))
   //fmt.Println(maxSubArray([]int{-2,1,-3}))
 
 }

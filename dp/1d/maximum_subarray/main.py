@@ -7,6 +7,23 @@ A subarray is a contiguous non-empty sequence of elements within an array.
 '''
 
 class Solution:
+    def maxSubArray_bottom_up(self, nums: list[int]) -> int:
+        if not nums:
+            return -1
+
+        prev = 0
+        res = nums[0]
+
+        for i in range(len(nums)-1, -1, -1):
+            num = nums[i]
+
+            cur = max(num, num+prev)
+            res = max(res, cur)
+
+            prev = cur
+
+        return res
+
     def maxSubArray(self, nums: list[int]) -> int:
         if not nums:
             return 0
@@ -24,10 +41,11 @@ class Solution:
 
 
 nums = [-2,1,-3,4,-1,2,1,-5,4]
-#nums = [1]
-#nums = [5,4,-1,7,8]
-#nums = [-11,-2,-6,-1]
+nums = [1]
+nums = [5,4,-1,7,8]
+nums = [-11,-2,-6,-1]
 
 sol = Solution()
 
-print(sol.maxSubArray(nums))
+#print(sol.maxSubArray(nums))
+print(sol.maxSubArray_bottom_up(nums))
