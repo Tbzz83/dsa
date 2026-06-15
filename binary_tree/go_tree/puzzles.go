@@ -21,8 +21,16 @@ func goodNodes(node *treeNode) int {
 }
 
 func invertTree(node *treeNode) {
+	if node == nil {
+		return
+	}
 
+	tmp := node.Right
+	node.Right = node.Left
+	node.Left = tmp
 
+	invertTree(node.Right)
+	invertTree(node.Left)
 }
 
 func goodNodesDfs(node *treeNode, maxi int, count *int) {
