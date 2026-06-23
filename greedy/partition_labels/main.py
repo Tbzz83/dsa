@@ -8,6 +8,12 @@ Return a list of integers representing the size of these substrings in the order
 
 class Solution:
     def partitionLabels(self, s: str) -> list[int]:
+        list_indexes = {}
+
+        for i, s in s:
+            print(s)
+
+    def partitionLabels_SubOptimal(self, s: str) -> list[int]:
         spans = {}
 
         for i, c in enumerate(s):
@@ -19,7 +25,6 @@ class Solution:
         spans_list = list(spans.values())
         res = []
         for span in spans_list:
-            print(res)
             if not res:
                 res.append(span)
 
