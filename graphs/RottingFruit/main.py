@@ -1,89 +1,93 @@
-#You are given a 2-D matrix grid. Each cell can have one of three possible values:
-#
-#    0 representing an empty cell
-#    1 representing a fresh fruit
-#    2 representing a rotten fruit
-#
-#Every minute, if a fresh fruit is horizontally or vertically adjacent to a rotten fruit, then the fresh fruit also becomes rotten.
-#
-#Return the minimum number of minutes that must elapse until there are zero fresh fruits remaining. If this state is impossible within the grid, return -1.
+'''
+You are given a 2-D matrix grid. Each cell can have one of three possible values:
 
-# Use BFS 
-#
-# Start from rotting fruits first. 
-# 1. Initialize global vars (q, seen set, time = 0)
-# 2. Find all rotting fruit, add to q as initialization step
-# 3. pop rotting fruits. add neighbors to q (use validate_and_add func to check neighbor coords are in-bound )
-# 4. time ++ 
-# 5. Continue until queue empty
+    0 representing an empty cell
+    1 representing a fresh fruit
+    2 representing a rotten fruit
+
+Every minute, if a fresh fruit is horizontally or vertically adjacent to a rotten fruit, then the fresh fruit also becomes rotten.
+
+Return the minimum number of minutes that must elapse until there are zero fresh fruits remaining. If this state is impossible within the grid, return -1.
+'''
 
 from collections import deque
 
-from IslandsAndTreasure.main import print_grid
 
-def orangesRotting(grid: list[list[int]]) -> int:
-    if len(grid) == 0:
-        return 0
+class Solution:
+    def orangesRotting(self, grid: list[list[int]]) -> int:
+        ROWS, COLS = len(grid), len(grid[0])
 
-    EMPTY = 0
-    FRESH = 1
-    ROTTEN = 2
+        fresh = 0
+        visited = set()
+        q = deque()
+        t = 0
+        def print_grid(grid: list[list[int]]):
+            print("===")
+            print(f"queue: {q}")
+            for r in grid:
+                print(r)
+            print("===")
 
-    ROWS, COLS = len(grid), len(grid[0])
-    q: deque[tuple[int, int]] = deque()
-    s: set[tuple[int, int]] = set()
+        def addAdjacentFruit(r,c):
+            opts = [
+                [r-1,c],
+                [r+1,c],
+                [r,c-1],
+                [r,c+1],
+            ]
 
-    # Contains all the coordinates of the fresh fruit
-    fresh_coords: set[tuple[int, int]] = set()
-    time: int = -1
+            fruit_found = False
+            for opt in opts:
+                nr, nc = opt
 
-    # init our q with rotten fruit
-    for r in range(ROWS):
-        for c in range(COLS):
-            val = grid[r][c]
+                if nr in range(ROWS) and nc in range(COLS):
+                    if grid[nr][nc] == 1 and (nr,nc) not in visited:
+                        q.append((nr, nc))
+                        nonlocal fresh
+                        fresh -= 1
+                        visited.add((nr,nc))
+                        grid[nr][nc] = 2
+                        fruit_found = True
 
-            if val == ROTTEN:
-                q.append((r,c))
-                s.add((r,c))
+            return fruit_found
 
-            elif val == FRESH:
-                fresh_coords.add((r,c))
+        for r in range(ROWS):
+            for c in range(COLS):
+                fruit = grid[r][c]
+                if fruit == 2:
+                    q.append((r,c))
+                    visited.add((r,c))
+                elif fruit == 1:
+                    fresh += 1
+        while q:
+            print_grid(grid)
+            q_len = len(q)
+            fruit_found = False
+            for i in range(q_len):
+                rotten_coord = q.popleft()
+                res = addAdjacentFruit(rotten_coord[0], rotten_coord[1])
+                if not fruit_found:
+                    fruit_found = res
 
-    def validate_and_add(r: int, c: int):
-        if (r not in range(ROWS) or
-            c not in range(COLS) or 
-            (r,c) in s or
-            grid[r][c] == EMPTY):
-            return
+            if fruit_found:
+                t += 1
 
-        fresh_coords.remove((r,c))
-        q.append((r,c))
-        s.add((r,c))
+        return t if fresh == 0 else -1
 
-    while q:
-        q_len: int = len(q)
+sol = Solution()
 
-        for _ in range(q_len):
-            r, c = q.popleft()
-            grid[r][c] = 2
 
-            validate_and_add(r,c+1)
-            validate_and_add(r,c-1)
-            validate_and_add(r+1,c)
-            validate_and_add(r-1,c)
 
-        time += 1
-        print_grid(grid)
-        print(time)
-        print("---")
+grid=[
+    [2,1,1],
+    [1,1,1],
+    [0,1,2]
+]
 
-    if time == -1: time = 0
-    return time if len(fresh_coords) == 0 else -1
+grid = [
+    [1,1,0],
+    [0,1,1],
+    [0,1,2]
+]
 
-def main():
-    grid = [[1,1,0],[0,1,1],[0,1,2]]
-
-    print(orangesRotting(grid))
-
-if __name__ == "__main__":
-    main()
+print(sol.orangesRotting(grid))
