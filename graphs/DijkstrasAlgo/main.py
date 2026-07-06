@@ -33,12 +33,5 @@ def main():
 
     print(dijkstra(0, adj))
 
-
-
-
-    
-
-    
-
 if __name__ == "__main__":
     main()
