@@ -14,14 +14,13 @@ class Solution:
         t = 0
         op = 1
         while n > 0:
+            print(n)
             op = n & (n-1)
             t += 1
             n = op
 
         return t
 
-        
-
 sol = Solution()
-n = 23
+n = 10
 print(sol.hammingWeightOptimal(n))

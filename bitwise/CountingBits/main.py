@@ -22,5 +22,6 @@ class Solution:
         for i in range(n+1):
             res.append(self.hammingWeightOptimal(i))
         return res
+
 sol = Solution()
 print(sol.countBits(4))
