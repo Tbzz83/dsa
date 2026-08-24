@@ -1,12 +1,17 @@
-use crate::node::Node;
+use crate::linked_list::LinkedList;
 
-mod node;
+mod linked_list;
 
 fn main() {
-    let mut head = Node::new(1);
 
-    head.push(2);
-    head.push(3);
+    let mut ll = LinkedList::<i32>::new();
+    ll.push(1);
+    ll.push(2);
+    ll.push(3);
 
-    //head.delete_ith(1);
+    let my_vec: Vec<i32> = vec![1,2,3,4];
+
+    for val in &my_vec {
+        dbg!(val);
+    }
 }
