@@ -14,6 +14,7 @@ We need to implement this using a Union-Find data structure (disjoint set): http
 
 """
 from advanced_graphs.minimum_spanning_tree.utils import create_adj_list
+from advanced_graphs.minimum_spanning_tree.union_find import UnionFind
 import heapq
 
 class Kruskals:
@@ -30,20 +31,31 @@ class Kruskals:
 
     def __init__(self, nodes) -> None:
         self.adj_list = create_adj_list(nodes)
+        print(self.adj_list)
+        self.num_nodes = len(self.adj_list.keys())
 
     def compute(self):
         min_heap_adj_list = self.create_min_heap_adj_list()
-        print(min_heap_adj_list)
+        uf = UnionFind(self.num_nodes)
 
-class UnionFind:
-    def __init__(self, size) -> None:
-        self.parent = list(range(size))
+        num_groups = self.num_nodes
+        res = 0
 
-    def find(self, i):
-        if self.parent[i]
-        
+        while num_groups > 1 and len(min_heap_adj_list) > 0:
+            ln, src, target = heapq.heappop(min_heap_adj_list)
+            
+            src_rep, target_rep = uf.find(src), uf.find(target)
+            if src_rep == target_rep:
+                continue
 
-# Undirected
+            uf.unite(src_rep, target_rep)
+            num_groups -= 1
+            res += ln
+
+        return res
+
+
+# src, dest, length
 nodes = [
     [0,1,5],
     [0,2,5],
@@ -52,6 +64,5 @@ nodes = [
     [2,3,1]
 ]
 
-#alg = Kruskals(nodes)
-#alg.compute()
-
+alg = Kruskals(nodes)
+print(alg.compute())
