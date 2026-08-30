@@ -11,41 +11,63 @@ using namespace std;
 // allows us to work with arrays and not vectors
 const int SIZE = 5;
 
+class UnionFindNode {
+public:
+    int val;
+    shared_ptr<UnionFindNode> parent;
+
+    UnionFindNode(int val) {
+        this->val = val;
+        parent = nullptr;
+    }
+};
+
 class UnionFind {
 public: 
-    shared_ptr<int> items[SIZE];
+    shared_ptr<UnionFindNode> items[SIZE];
 
     UnionFind() {
         // Initialize items
         for (auto i = 0; i < SIZE; i++) {
             // Use unique_ptr
-            items[i] = make_shared<int>(i);
+            items[i] = make_shared<UnionFindNode>(UnionFindNode(i));
         }
     }
 
-    // Who is your parent
-    int* find(int val) {
-        if (*items[val] == val) {
-            return items[val].get();
+    // Return index of parent
+    shared_ptr<UnionFindNode> find(int idx) {
+        auto node = items[idx];
+        auto p = node->parent;
+
+        while (p) {
+            auto tmp = p;
+            p = p->parent;
+            node = tmp;
         }
 
-        return find(*items[val]);
+        return node;
     }
 
     void unite(int a, int b) {
         auto a_rep = find(a);
         auto b_rep = find(b);
-        items[b] = items[a];
+        b_rep->parent = a_rep;
     }
 };
 
 int main() {
     auto uf = UnionFind();
+
+    for (auto i = 0; i < SIZE; i++) {
+        cout << uf.items[i] << "\n";
+    }
+    auto a = uf.find(0);
+    auto b = uf.find(1);
     uf.unite(1,2);
     uf.unite(3,4);
     uf.unite(2,3);
     // Should print '1'
-    cout << *uf.find(4) << "\n";
+    cout << uf.find(4)->val << "\n";
 
 //    cout << "---\n";
 //
