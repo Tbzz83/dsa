@@ -8,7 +8,10 @@ Return the minimum cost to connect all points together, such that there exists e
 
 
 So this is apparently an MST algorithm. Dijkstra's will not work because it finds the shortest path to all other nodes,
-starting from some src node. See this counter-example for how MST and Dijkstras are different: https://stackoverflow.com/questions/1909281/use-dijkstras-to-find-a-minimum-spanning-tree
+STARTING from some src node. See this counter-example for how MST and Dijkstras are different: https://stackoverflow.com/questions/1909281/use-dijkstras-to-find-a-minimum-spanning-tree
+
+
+Will implement using Kruskal's algorithm which uses a UnionFind data structure (see advanced_graphs/minimum_spanning_tree)
 """
 
 from collections import deque
@@ -17,46 +20,56 @@ import heapq
 
 
 class Solution:
-    def create_adj_list(self, points):
-        adj_list = DefaultDict(list)
-        return adj_list
+    def find(self, uf, i) -> int:
+        if uf[i] == i:
+            return i
+
+        return self.find(uf, uf[i])
+
+    def unite(self, uf, i,j) -> list[int]:
+        i_rep, j_rep = self.find(uf, i), self.find(uf, j) 
+
+        uf[j_rep] = uf[i_rep]
+
+        return uf
+
 
     # Solve using Kruskals
     def minCostConnectPoints(self, points: list[list[int]]) -> int:
-        min_heap = []
-        for i in range(len(points)):
-            for j in range(len(points)):
+        uf = [i for i in range(len(points))]
+
+        sorted_edges = []
+        for i, p in enumerate(points):
+            for j, q in enumerate(points):
                 if i == j:
                     continue
 
-                pt_1 = points[i]
-                pt_2 = points[j]
+                man_dist = abs(p[0] - q[0]) + abs(p[1] - q[1])
 
-                man_dist = abs(pt_1[0] - pt_2[0]) + abs(pt_1[1] - pt_2[1])
+                heapq.heappush(sorted_edges, (man_dist, i,j))
 
-                heapq.heappush(min_heap, (man_dist,i,j))
-
-        seen = set()
-
+        num_groups = len(uf)
         res = 0
-        while min_heap:
-            if len(seen) == len(points):
-                break
 
-            dst, i, j = heapq.heappop(min_heap)
-            if i in seen and j in seen:
+        while num_groups > 1:
+            man_dist,i,j = heapq.heappop(sorted_edges)
+
+            i_rep, j_rep = self.find(uf,i), self.find(uf,j)
+            if i_rep == j_rep:
                 continue
 
-            seen.add(i)
-            seen.add(j)
-
-            res += dst
+            self.unite(uf, i,j)
+            num_groups -= 1
+            res += man_dist
 
         return res
+            
 
-points = [[0,0],[2,2],[3,3]]
+
+
+#points = [[0,0],[2,2],[3,3]]
 points = [[0,0],[2,2],[3,3],[2,4],[4,2]]
-points=[[7,7],[8,0],[9,-9],[-3,4]]
-points=[[2,-3],[-17,-8],[13,8],[-17,-15]]
+#points=[[7,7],[8,0],[9,-9],[-3,4]]
+#points=[[2,-3],[-17,-8],[13,8],[-17,-15]]
 sol = Solution()
 print(sol.minCostConnectPoints(points))
