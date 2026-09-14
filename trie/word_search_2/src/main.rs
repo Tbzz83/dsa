@@ -9,12 +9,12 @@ use std::collections::{HashMap, HashSet, VecDeque};
 struct Solution {}
 
 #[derive (Clone, Debug)]
-struct Node {
+struct Node<'a> {
     coord: (usize,usize),
-    children: HashMap<char, Vec<Node>>,
+    children: HashMap<char, Vec<&'a Node<'a>>>,
 }
 
-impl Node {
+impl <'a>Node<'a> {
     fn new(coord: (usize,usize)) -> Self {
         Self { children: HashMap::new(), coord: coord }
     }
@@ -22,18 +22,38 @@ impl Node {
 
 
 #[derive (Debug)]
-struct Trie {
-    root: Node,
+struct Trie<'a> {
+    root: &'a Node<'a>,
 }
 
-impl Trie {
-    fn new(coord: (usize,usize)) -> Self {
+impl <'a>Trie<'a> {
+    fn new(root_node: &'a Node) -> Self {
         Self { 
-            root: Node::new(coord)
+            root: root_node
         }
     }
 
-    fn populate(mut node: Node, board: &Vec<Vec<char>>, seen: &mut HashSet<(usize,usize)>) {
+    fn get_valid_directions(coord: (usize,usize), board_height: i32, board_width: i32) -> Vec<(usize,usize)> {
+        let mut res = vec![];
+        let directions = vec![
+            (coord.0 as i32 -1,coord.1 as i32),
+            (coord.0 as i32 +1,coord.1 as i32),
+            (coord.0 as i32 ,coord.1 as i32 +1),
+            (coord.0 as i32,coord.1 as i32 -1),
+        ];
+
+        for direction in directions {
+            if direction.0 < 0 || direction.0 >= board_height || direction.1 < 0 || direction.1 >= board_width {
+                continue;
+            }
+
+            res.push((direction.0 as usize, direction.1 as usize));
+        }
+
+        res
+    }
+
+    fn populate(node: &mut Node, board: &Vec<Vec<char>>, seen: &mut HashSet<(usize,usize)>) {
         if seen.contains(&node.coord) {
             return;
         }
@@ -46,18 +66,11 @@ impl Trie {
             node.children.insert(c, vec![]);
         }
 
-        let directions = vec![
-            (node.coord.0-1,node.coord.1),
-            (node.coord.0+1,node.coord.1),
-            (node.coord.0,node.coord.1+1),
-            (node.coord.0,node.coord.1-1),
-        ];
-
-        for direction in directions {
+        for direction in Trie::get_valid_directions(node.coord, board.len() as i32, board[0].len() as i32) {
             if !seen.contains(&direction) {
-                let new_node = Node::new(direction);
-                node.children.get_mut(&c).expect("node should have children already!").push(new_node.clone());
-                Trie::populate(new_node, board, seen);
+                let mut new_node = Node::new(direction);
+                node.children.get_mut(&c).expect("node should have children already!").push(&new_node);
+                Trie::populate(&new_node, board, seen);
             }
         }
     }
@@ -66,9 +79,10 @@ impl Trie {
 impl Solution {
     pub fn find_words(board: Vec<Vec<char>>, words: Vec<String>) -> Vec<String> {
         let x = vec!["Hello".to_string()];
-        let trie = Trie::new((0,0));
+        let root_node = Node::new((0,0));
+        let trie = Trie::new(&root_node);
 
-        Trie::populate(trie.root.clone(), &board, &mut HashSet::new());
+        Trie::populate(trie.root, &board, &mut HashSet::new());
 
         dbg!(trie);
         x 
