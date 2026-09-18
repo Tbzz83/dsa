@@ -4,13 +4,34 @@ Given a 2-D grid of characters board and a list of strings words, return all wor
 For a word to be present it must be possible to form the word with a path in the board with horizontally or vertically neighboring cells. The same cell may not be used more than once in a word.
 */
 
+struct Solution {}
+
 use std::collections::HashSet;
 
-use crate::prefix_tree::Node;
+#[derive (Debug, Default)]
+struct Node {
+    pub is_end_of_word: bool,
+    pub children: [Option<Box<Node>>; 26]
+}
 
-mod prefix_tree;
+impl Node {
+    pub fn new() -> Self {
+        Default::default()
+    }
 
-struct Solution {}
+    pub fn add_word(&mut self, word: String) {
+        let mut cur = self;
+        for c in word.as_bytes() {
+            let child_idx = (c - b'a') as usize;
+            if cur.children[child_idx].is_none() {
+                cur.children[child_idx] = Some(Box::new(Node::new()));
+            }
+
+            cur = cur.children[child_idx].as_mut().expect("Child node must exist");
+        }
+        cur.is_end_of_word = true;
+    }
+}
 
 impl Solution {
     fn dfs(
@@ -20,36 +41,39 @@ impl Solution {
         mut cur_str: String, 
         rows: i32, 
         cols: i32, 
-        seen: &mut HashSet<(i32,i32)>, 
-        board: &Vec<Vec<char>>,
+        board: &mut [Vec<char>],
         res: &mut HashSet<String>,
     ) 
     {
-        if (r < 0 || r >= rows) || (c < 0 || c >= cols) || seen.contains(&(r,c)) {
+        const VISITED: char = '#';
+
+        if (r < 0 || r >= rows) || (c < 0 || c >= cols) || board[r as usize][c as usize] == VISITED {
             return;
         }
 
+
         let next_char = board[r as usize][c as usize];
-        if !node.children.contains_key(&next_char) {
+        let next_idx = ((next_char as u8) - b'a') as usize;
+        if node.children[next_idx].is_none() {
             return
         }
 
-        node = node.children.get_mut(&next_char).expect("Key should exist");
+        node = node.children[next_idx].as_mut().expect("Key should exist");
         cur_str += &next_char.to_string();
         if node.is_end_of_word && !res.contains(&cur_str) {
             res.insert(cur_str.clone());
         }
-        seen.insert((r,c));
+        let prior = std::mem::replace(&mut board[r as usize][c as usize], VISITED);
 
-        Self::dfs(r+1,c,node,cur_str.clone(),rows,cols,seen,board,res);
-        Self::dfs(r-1,c,node,cur_str.clone(),rows,cols,seen,board,res);
-        Self::dfs(r,c+1,node,cur_str.clone(),rows,cols,seen,board,res);
-        Self::dfs(r,c-1,node,cur_str.clone(),rows,cols,seen,board,res);
+        Self::dfs(r+1,c,node,cur_str.clone(),rows,cols,board,res);
+        Self::dfs(r-1,c,node,cur_str.clone(),rows,cols,board,res);
+        Self::dfs(r,c+1,node,cur_str.clone(),rows,cols,board,res);
+        Self::dfs(r,c-1,node,cur_str.clone(),rows,cols,board,res);
 
-        seen.remove(&(r,c));
+        let _ = std::mem::replace(&mut board[r as usize][c as usize], prior);
     }
 
-    pub fn find_words(board: Vec<Vec<char>>, words: Vec<String>) -> Vec<String> {
+    pub fn find_words(mut board: Vec<Vec<char>>, words: Vec<String>) -> Vec<String> {
         let mut root = Node::new();
         let mut res: HashSet<String> = HashSet::new();
 
@@ -62,7 +86,7 @@ impl Solution {
 
         for r in 0..rows {
             for c in 0..cols {
-                Self::dfs(r,c,&mut root,"".to_string(),rows,cols,&mut HashSet::new(), &board, &mut res);
+                Self::dfs(r,c,&mut root,"".to_string(),rows,cols, &mut board, &mut res);
             }
         }
 
