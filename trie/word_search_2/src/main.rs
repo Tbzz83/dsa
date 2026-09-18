@@ -4,88 +4,69 @@ Given a 2-D grid of characters board and a list of strings words, return all wor
 For a word to be present it must be possible to form the word with a path in the board with horizontally or vertically neighboring cells. The same cell may not be used more than once in a word.
 */
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::HashSet;
+
+use crate::prefix_tree::Node;
+
+mod prefix_tree;
 
 struct Solution {}
 
-#[derive (Clone, Debug)]
-struct Node<'a> {
-    coord: (usize,usize),
-    children: HashMap<char, Vec<&'a Node<'a>>>,
-}
-
-impl <'a>Node<'a> {
-    fn new(coord: (usize,usize)) -> Self {
-        Self { children: HashMap::new(), coord: coord }
-    }
-}
-
-
-#[derive (Debug)]
-struct Trie<'a> {
-    root: &'a Node<'a>,
-}
-
-impl <'a>Trie<'a> {
-    fn new(root_node: &'a Node) -> Self {
-        Self { 
-            root: root_node
-        }
-    }
-
-    fn get_valid_directions(coord: (usize,usize), board_height: i32, board_width: i32) -> Vec<(usize,usize)> {
-        let mut res = vec![];
-        let directions = vec![
-            (coord.0 as i32 -1,coord.1 as i32),
-            (coord.0 as i32 +1,coord.1 as i32),
-            (coord.0 as i32 ,coord.1 as i32 +1),
-            (coord.0 as i32,coord.1 as i32 -1),
-        ];
-
-        for direction in directions {
-            if direction.0 < 0 || direction.0 >= board_height || direction.1 < 0 || direction.1 >= board_width {
-                continue;
-            }
-
-            res.push((direction.0 as usize, direction.1 as usize));
-        }
-
-        res
-    }
-
-    fn populate(node: &mut Node, board: &Vec<Vec<char>>, seen: &mut HashSet<(usize,usize)>) {
-        if seen.contains(&node.coord) {
+impl Solution {
+    fn dfs(
+        r: i32, 
+        c: i32, 
+        mut node: &mut Node, 
+        mut cur_str: String, 
+        rows: i32, 
+        cols: i32, 
+        seen: &mut HashSet<(i32,i32)>, 
+        board: &Vec<Vec<char>>,
+        res: &mut HashSet<String>,
+    ) 
+    {
+        if (r < 0 || r >= rows) || (c < 0 || c >= cols) || seen.contains(&(r,c)) {
             return;
         }
 
-        seen.insert(node.coord);
-
-        let c = board[node.coord.0][node.coord.1];
-
-        if !node.children.contains_key(&c) {
-            node.children.insert(c, vec![]);
+        let next_char = board[r as usize][c as usize];
+        if !node.children.contains_key(&next_char) {
+            return
         }
 
-        for direction in Trie::get_valid_directions(node.coord, board.len() as i32, board[0].len() as i32) {
-            if !seen.contains(&direction) {
-                let mut new_node = Node::new(direction);
-                node.children.get_mut(&c).expect("node should have children already!").push(&new_node);
-                Trie::populate(&new_node, board, seen);
+        node = node.children.get_mut(&next_char).expect("Key should exist");
+        cur_str += &next_char.to_string();
+        if node.is_end_of_word && !res.contains(&cur_str) {
+            res.insert(cur_str.clone());
+        }
+        seen.insert((r,c));
+
+        Self::dfs(r+1,c,node,cur_str.clone(),rows,cols,seen,board,res);
+        Self::dfs(r-1,c,node,cur_str.clone(),rows,cols,seen,board,res);
+        Self::dfs(r,c+1,node,cur_str.clone(),rows,cols,seen,board,res);
+        Self::dfs(r,c-1,node,cur_str.clone(),rows,cols,seen,board,res);
+
+        seen.remove(&(r,c));
+    }
+
+    pub fn find_words(board: Vec<Vec<char>>, words: Vec<String>) -> Vec<String> {
+        let mut root = Node::new();
+        let mut res: HashSet<String> = HashSet::new();
+
+        for word in words {
+            root.add_word(word);
+        }
+
+        let rows = board.len() as i32;
+        let cols = board[0].len() as i32;
+
+        for r in 0..rows {
+            for c in 0..cols {
+                Self::dfs(r,c,&mut root,"".to_string(),rows,cols,&mut HashSet::new(), &board, &mut res);
             }
         }
-    }
-}
 
-impl Solution {
-    pub fn find_words(board: Vec<Vec<char>>, words: Vec<String>) -> Vec<String> {
-        let x = vec!["Hello".to_string()];
-        let root_node = Node::new((0,0));
-        let trie = Trie::new(&root_node);
-
-        Trie::populate(trie.root, &board, &mut HashSet::new());
-
-        dbg!(trie);
-        x 
+        res.into_iter().collect()
     }
 }
 
@@ -102,6 +83,6 @@ fn main() {
         vec!['o','d'],
     ];
     let words = vec!["cat".to_string(), "back".to_string(), "backend".to_string()];
-    let words = vec!["bad".into(), "ad".into()];
+    let words = vec!["bad".into(), "ad".into(), "badger".into()];
     dbg!(Solution::find_words(board, words));
 }

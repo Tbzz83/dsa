@@ -49,7 +49,7 @@ class Solution:
             tmp = cur
             cur = cur.children[val]
             cur_str += val
-            if cur.is_word:
+            if cur.is_word and cur_str not in res:
                 res.add(cur_str)
             dirs = [
                     [r+1,c],
@@ -62,8 +62,6 @@ class Solution:
                 dfs(dir[0], dir[1], cur, cur_str)
 
             seen.remove((r,c))
-            cur_str = cur_str[:len(cur_str)-1] # pop
-            cur = tmp # Backtrack through trie
 
         for r in range(ROWS):
             for c in range(COLS):
