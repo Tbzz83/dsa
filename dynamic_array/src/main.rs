@@ -5,7 +5,10 @@ mod testing;
 
 fn main() {
     let mut dyn_array: DynArray<i32> = DynArray::with_capacity(1);
-    dyn_array.push(3);
+
+    for i in 0..1000 {
+        dyn_array.push(i);
+    }
+
     dbg!(dyn_array);
-    //testing();
 }
