@@ -45,94 +45,153 @@ class LRUCache:
 
         return res
 
+    def ll_empty(self) -> bool:
+        if not self.head and not self.tail:
+#            if len(self.cache) != 0:
+#                raise Exception(f"ll is empty while self.cache is non-empty: {self.cache}")
+
+            return True
+        if self.head and self.tail:
+#            if len(self.cache) == 0:
+#                raise Exception(f"ll is non-empty ({self.__repr__()}) while self.cache is empty: {self.cache}")
+            return False
+
+        raise Exception(f"self.head is {self.head} while self.tail is {self.tail}")
+
+    def at_capacity(self):
+        return self.num_nodes == self.capacity
 
     def get(self, key: int) -> int:
-        if key in self.cache:
-            cur = self.cache[key]
-            self.move_node_to_mru(cur)
-            return cur.value
+        if self.ll_empty():
+            return -1
+
+        elif key in self.cache:
+            node = self._delete_node(self.cache[key])
+            value = node.value
+            self._insert_node(node)
+            return value
         else:
             return -1
-        
-
-    # Moves a node to most recently used
-    def move_node_to_mru(self, node: Node):
-        if node.prev and node.next:
-            node.prev.next = node.next
-            node.next.prev = node.prev
-
-        elif node.next:
-            self.head = node.next
-            self.head.prev = None
-
-        if self.tail:
-            self.tail.next = node
-            node.prev = self.tail
-
-        self.tail = node
-        node.next = None
 
     def put(self, key: int, value: int) -> None:
+        """
+        Create new node based on key, value.
+        if at capacity, calls remove_lru()
+        inserts new node.
+        Handles accounting of metadata
+        """
+
+        # If our key exists, simply delete it first
+        # It is simpler to do it this way than
+        # overwriting the value of an existing node
         if key in self.cache:
-            cur = self.cache[key]
-
-            if cur.value != value:
-                self.move_node_to_mru(cur)
-                cur.value = value
-
-            return
-
+            node = self._delete_node(self.cache[key])
+            del self.cache[key]
+            del node
+            self.num_nodes -= 1
+            
         new_node = Node(key,value)
+
+        if self.at_capacity():
+            self.remove_lru()
+
+        self._insert_node(new_node)
         self.cache[key] = new_node
         self.num_nodes += 1
 
-        if self.num_nodes == self.capacity + 1:
-            self.remove_lru()
+    def _insert_node(self, node: Node) -> None:
+        """
+        Inserts given node into the ll
+        This method does not perform any accounting of metadata.
+        """
+        if self.ll_empty():
+            self.head = node
+            self.tail = node
+            node.prev = None
+            node.next = None
 
-        if not self.tail:
-            self.tail = new_node
+
+        # Can safely assume our ll is non-empty
         else:
-            self.tail.next = new_node
-            new_node.prev = self.tail
-            self.tail = new_node
+            # Update new node
+            node.prev = self.tail
+            node.next = None
 
-        if not self.head:
-            self.head = new_node
-
+            # Update tail
+            self.tail.next = node
+            self.tail = node
 
     def remove_lru(self):
-        if not self.head:
+        """
+        Gets the lru node and calls _delete_node(lru_node)
+        Handles accounting of metadata
+        """
+        if self.ll_empty():
             return
 
-        head = self.head
-        self.head = self.head.next
+        lru_node = self.head
+        lru_key = lru_node.key
 
-        if self.head:
-            self.head.prev = None
-
-        del self.cache[head.key]
+        _ = self._delete_node(lru_node)
         self.num_nodes -= 1
-        del head
+        del self.cache[lru_key]
 
-cache = LRUCache(5)
-cache.put(1,10)
-cache.put(2,20)
-cache.put(3,30)
-cache.put(4,40)
-cache.put(5,50)
-cache.put(2,200)
-cache.put(4,40)
-print(cache.get(2))
+    def _delete_node(self, node: Node) -> Node:
+        """
+        Removes given node from the ll.
+        This method may update self.head and self.tail.
+        This method does not perform any accounting of metadata.
+        """
+
+        # In between two nodes
+        if node.prev and node.next:
+            node.prev.next = node.next
+            node.next.prev = node.prev
+            return node
+
+        # Node is at start of ll
+        if not node.prev and node.next:
+            node.next.prev = node.prev
+            self.head = node.next
+            return node
+
+        # Node is at end of ll
+        if node.prev and not node.next:
+            node.prev.next = node.next
+            self.tail = node.prev
+            return node
+
+        # We are the only node in the ll, and the capacity must be 1
+        self.head = self.tail = None
+        return node
+
+i = 0
+cache = None
+res = []
+input = ["LRUCache", [5], "get", [80], "put", [1,100], "get", [1], "put", [2,139], "get", [2], "get", [1]]
+#input = ["LRUCache", [5], "get", [80], "put", [1,100], "get", [1], "put", [2,139], "get", [2]]
+#input = ["LRUCache", [5], "get", [80], "put", [1,100], "get", [1] ]
+input = ["LRUCache", [2], "get", [2], "put", [2, 6], "get", [1], "put", [1, 5], "put", [1, 2], "get", [1], "get", [2]]
+while i < len(input):
+    command, args = input[i], input[i+1]
+
+    if command == "LRUCache":
+        cache = LRUCache(args[0])
+        res.append(None)
+
+    elif command == "put":
+        k,v = args[0], args[1]
+        cache.put(k,v)
+        res.append(None)
+
+    elif command == "get":
+        k = args[0]
+        res.append(cache.get(k))
+
+    else:
+        raise Exception(f"Unknown command {command}")
+
+    i += 2
+
+print(res)
 print(cache)
-#print(cache.head, cache.head.prev, cache.head.next)
-#print(cache.tail, cache.tail.prev, cache.tail.next)
-#cache.get(2)
-#
-#print(cache)
-#cache.get(2)
-#print(cache.cache)
-#print(cache.get(1))
-#print(cache.get(2))
-#cache.put(3,30)
-#cache.get(2)
-#cache.get(1)
