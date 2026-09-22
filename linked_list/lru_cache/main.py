@@ -47,15 +47,11 @@ class LRUCache:
 
     def ll_empty(self) -> bool:
         if not self.head and not self.tail:
-#            if len(self.cache) != 0:
-#                raise Exception(f"ll is empty while self.cache is non-empty: {self.cache}")
-
             return True
         if self.head and self.tail:
-#            if len(self.cache) == 0:
-#                raise Exception(f"ll is non-empty ({self.__repr__()}) while self.cache is empty: {self.cache}")
             return False
 
+        # Edge case where one of self.head | self.tail is set while the other is None
         raise Exception(f"self.head is {self.head} while self.tail is {self.tail}")
 
     def at_capacity(self):
@@ -172,6 +168,7 @@ input = ["LRUCache", [5], "get", [80], "put", [1,100], "get", [1], "put", [2,139
 #input = ["LRUCache", [5], "get", [80], "put", [1,100], "get", [1], "put", [2,139], "get", [2]]
 #input = ["LRUCache", [5], "get", [80], "put", [1,100], "get", [1] ]
 input = ["LRUCache", [2], "get", [2], "put", [2, 6], "get", [1], "put", [1, 5], "put", [1, 2], "get", [1], "get", [2]]
+
 while i < len(input):
     command, args = input[i], input[i+1]
 
